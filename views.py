@@ -1,7 +1,7 @@
 # coding:utf8
 
 from flask import Flask, render_template, redirect
-from forms import LoginForm, RegisterForm
+from forms import LoginForm, RegisterForm, ArtForm
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "12345678"
@@ -30,7 +30,8 @@ def logout():
 # 发布文章
 @app.route("/art/add/", methods=['GET', 'POST'])
 def art_add():
-    return render_template("art_add.html", title="发布文章")
+    form = ArtForm()
+    return render_template("art_add.html", title="发布文章", form=form)
 
 
 # 编辑文章
