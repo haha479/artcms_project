@@ -1,6 +1,8 @@
 # coding:utf8
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField, FileField, TextAreaField
+from wtforms.validators import DataRequired, EqualTo, ValidationError
+from models import User
 
 """
 登录表单:
@@ -54,7 +56,10 @@ class LoginForm(FlaskForm):
 class RegisterForm(FlaskForm):
     name = StringField(
         label='账号',
-        validators=[],
+        validators=[
+            # DataRequired用来判断表单输入是否为空
+            DataRequired('账号不能为空')
+        ],
         description='账号',
         render_kw={
             'class': 'form-control'
@@ -62,7 +67,9 @@ class RegisterForm(FlaskForm):
     )
     pwd = PasswordField(
         label='密码',
-        validators=[],
+        validators=[
+            DataRequired('密码不能为空')
+        ],
         description='密码',
         render_kw={
             'class': 'form-control'
@@ -70,7 +77,11 @@ class RegisterForm(FlaskForm):
     )
     repwd = PasswordField(
         label='密码',
-        validators=[],
+        validators=[
+            DataRequired('确认密码不能为空'),
+            # EqualTo用来验证与某一内容是否一致
+            EqualTo('pwd', message='两次输入不一致')
+        ],
         description='密码',
         render_kw={
             'class': 'form-control'
@@ -78,7 +89,9 @@ class RegisterForm(FlaskForm):
     )
     code = StringField(
         label='验证码',
-        validators=[],
+        validators=[
+            DataRequired('验证码不能为空')
+        ],
         description='验证码',
         render_kw={
             'class': 'form-control',
@@ -92,6 +105,16 @@ class RegisterForm(FlaskForm):
             'class': 'btn btn-success'
         }
     )
+
+    # 自定义字段验证规则: validate_字段名
+
+    def validate_name(self, field):
+        # 获得账号表单中的内容
+        name = field.data
+        # 检测数据库中的name
+        user = User.query.filter_by(name=name).count()
+        if user > 0:
+            raise ValidationError('账号已经存在!')
 
 
 """

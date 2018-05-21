@@ -1,7 +1,9 @@
 # coding:utf8
-
-from flask import Flask, render_template, redirect
+import datetime
+from flask import Flask, render_template, redirect, flash
 from forms import LoginForm, RegisterForm, ArtForm
+from models import User, db
+from werkzeug.security import generate_password_hash
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "12345678"
@@ -18,6 +20,24 @@ def login():
 @app.route("/register/", methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
+    # 通过表单提交过来进行验证
+    if form.validate_on_submit():
+        # 获取提交的数据
+        data = form.data
+        # 保存数据到数据库
+        user = User(
+            name=data['name'],
+            pwd=generate_password_hash(data['pwd']),
+            addtime=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        )
+        # 提交会话(数据修改)
+        db.session.add(user)
+        db.session.commit()
+        # 定义一个闪现
+        flash('注册成功, 请登录', 'ok')
+        return redirect('/login/')
+    else:
+        flash('输入正确信息注册', 'err')
     return render_template("register.html", title="注册", form=form)
 
 
