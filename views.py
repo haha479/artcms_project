@@ -1,20 +1,24 @@
 # coding:utf8
 
 from flask import Flask, render_template, redirect
+from forms import LoginForm, RegisterForm
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = "12345678"
 
 
 # 登录
 @app.route("/login/", methods=['GET', 'POST'])
 def login():
-    return render_template("login.html", title="登录")
+    form = LoginForm()
+    return render_template("login.html", title="登录", form=form)
 
 
 # 注册
 @app.route("/register/", methods=['GET', 'POST'])
 def register():
-    return render_template("register.html", title="注册")
+    form = RegisterForm()
+    return render_template("register.html", title="注册", form=form)
 
 
 # 退出登录(302跳转到登录页面)
