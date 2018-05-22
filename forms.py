@@ -1,4 +1,5 @@
 # coding:utf8
+from flask import session
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField, FileField, TextAreaField
 from wtforms.validators import DataRequired, EqualTo, ValidationError
@@ -107,7 +108,7 @@ class RegisterForm(FlaskForm):
     )
 
     # 自定义字段验证规则: validate_字段名
-
+    # 用于检测注册时的账号是否存在
     def validate_name(self, field):
         # 获得账号表单中的内容
         name = field.data
@@ -116,6 +117,18 @@ class RegisterForm(FlaskForm):
         if user > 0:
             raise ValidationError('账号已经存在!')
 
+    # 用于检测注册时的验证码是否正确
+    def validate_code(self, field):
+        # 固定语法获得验证码表单中的内容
+        code = field.data
+        print('session中的验证码字符为', session['code'])
+        print('网页中输入的验证码为', code)
+        if "code" not in session:
+            print('not in ')
+            raise ValidationError('验证码不能为空')
+        if "code" in session and session['code'].lower() != code.lower():
+            print('not in and')
+            raise ValidationError('验证码错误')
 
 """
 发布文章表单:

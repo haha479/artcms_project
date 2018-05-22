@@ -29,7 +29,7 @@
     <div class="form-group">
         <label>验证码</label>
         {{ form.code }}
-        <img data-src="holder.js/180x50" style="margin-top: 6px;">
+        <img title="点击更换一张" onclick="this.src='/codes/?' + Math.random()" src="/codes/" style="margin-top: 6px;">
         {% for v in form.code.errors %}
             <p style="color: red">{{ v }}</p>
         {% endfor %}

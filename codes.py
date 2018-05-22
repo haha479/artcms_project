@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 
 # 定义验证码功能
-class Code:
+class Codes:
     # 随机一个字母或数字
     def random_chr(self):
         num = random.randint(1, 3)
@@ -83,10 +83,5 @@ class Code:
             img_name = image_name,
             code = chars
         )
-        # 显示图片
-        image.show()
 
 
-if __name__ == '__main__':
-    c = Code()
-    c.create_code()
