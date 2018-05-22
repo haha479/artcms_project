@@ -14,6 +14,14 @@ app.config["SECRET_KEY"] = "12345678"
 @app.route("/login/", methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    # 如果验证成功
+    if form.validate_on_submit():
+        # 得到表单中输入的数据
+        data = form.data
+        # 将表单中的数据(用户名)存到到session中
+        session['user'] = data['name']
+        flash('登录成功', 'ok')
+        return redirect('/art/list/')
     return render_template("login.html", title="登录", form=form)
 
 
@@ -32,8 +40,8 @@ def register():
             addtime=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         )
         # 提交会话(数据修改)
-        # db.session.add(user)
-        # db.session.commit()
+        db.session.add(user)
+        db.session.commit()
         # 定义一个闪现
         flash('注册成功, 请登录', 'ok')
         return redirect('/login/')

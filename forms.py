@@ -17,7 +17,9 @@ from models import User
 class LoginForm(FlaskForm):
     name = StringField(
         label='账号',
-        validators=[],
+        validators=[
+            DataRequired('账号不能为空')
+        ],
         description='账号',
         render_kw={
             'class': "form-control",
@@ -28,7 +30,9 @@ class LoginForm(FlaskForm):
 
     pwd = PasswordField(
         label='密码',
-        validators=[],
+        validators=[
+            DataRequired('密码不能为空')
+        ],
         description='密码',
         render_kw={
             'class': 'form-control',
@@ -44,6 +48,13 @@ class LoginForm(FlaskForm):
         }
     )
 
+    def validate_pwd(self, field):
+        print('self.name.data=', self.name.data)
+        pwd = field.data
+        user = User.query.filter_by(name=self.name.data).first()
+        print('user==', user)
+        if not user.check_pwd(pwd):
+            raise ValidationError('密码错误')
 
 """
 1. 账号

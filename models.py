@@ -3,6 +3,7 @@ import pymysql
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from werkzeug.security import check_password_hash
 
 
 app = Flask(__name__)
@@ -30,6 +31,11 @@ class User(db.Model):
     def __repr__(self):
         return "<User %r>" % self.name
 
+    def check_pwd(self, pwd):
+        print('models中self.pwd==',self.pwd)
+        print('models中pwd==', pwd)
+        # 该函数的作用是 : 用于验证经过generate_password_hash加盐加密生成的密码, 通过返回True
+        return check_password_hash(self.pwd, pwd)
 
 """
 文章模型
@@ -57,11 +63,12 @@ class Art(db.Model):
 
 if __name__ == "__main__":
     # db.create_all()
-    from werkzeug.security import generate_password_hash
-    zhoubin = User(
-        name='bin',
-        pwd=generate_password_hash('321123'),
-        addtime= datetime.now()
-    )
-    db.session.add(zhoubin)
-    db.session.commit()
+    # from werkzeug.security import generate_password_hash
+    # zhoubin = User(
+    #     name='bin',
+    #     pwd=generate_password_hash('321123'),
+    #     addtime= datetime.now()
+    # )
+    # db.session.add(zhoubin)
+    # db.session.commit()
+    pass
