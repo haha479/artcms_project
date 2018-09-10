@@ -1,10 +1,11 @@
 # coding:utf8
 import os
 import datetime
-from flask import Flask, render_template, redirect, flash, session, Response
+from flask import Flask, render_template, redirect, flash, session, Response, url_for, request
 from forms import LoginForm, RegisterForm, ArtForm
 from models import User, db
 from werkzeug.security import generate_password_hash
+from functools import wraps
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "12345678"
@@ -24,6 +25,14 @@ def login():
         return redirect('/art/list/')
     return render_template("login.html", title="登录", form=form)
 
+# 登陆装饰器
+def user_login_req(f):
+    @wraps(f)
+    def login_req(*args, **kwargs):
+        if 'user' not in session:
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return login_req
 
 # 注册
 @app.route("/register/", methods=['GET', 'POST'])
@@ -52,12 +61,15 @@ def register():
 
 # 退出登录(302跳转到登录页面)
 @app.route("/logout/", methods=['GET'])
+@user_login_req
 def logout():
+    session.pop('user', None)
     return redirect('/login/')
 
 
 # 发布文章
 @app.route("/art/add/", methods=['GET', 'POST'])
+@user_login_req
 def art_add():
     form = ArtForm()
     return render_template("art_add.html", title="发布文章", form=form)
@@ -65,18 +77,21 @@ def art_add():
 
 # 编辑文章
 @app.route("/art/edit/<int:id>/", methods=['GET', 'POST'])
+@user_login_req
 def art_edit(id):
     return render_template('art_edit.html')
 
 
 # 删除文章
 @app.route('/art/del/<int:id>/', methods=['GET', 'POST'])
+@user_login_req
 def art_del(id):
     return redirect('/art/list/')
 
 
 # 文章列表
 @app.route('/art/list/', methods=['GET', 'POST'])
+@user_login_req
 def art_list():
     return render_template('art_list.html', title="文章列表")
 
@@ -100,4 +115,4 @@ def codes():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='127.0.0.1', port='8080')
+    app.run(debug=True, host='127.0.0.1', port=8080)
