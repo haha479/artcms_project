@@ -1,5 +1,4 @@
-# coding:utf8
-import os
+﻿import os
 import random
 import uuid
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
@@ -43,7 +42,7 @@ class Codes:
         image = Image.new('RGB', (width, height), (192, 192, 192))
         # 创建font对象, 定义字体和大小
         font_name = random.randint(1, 3)  # 字体名称 1~~3
-        font_file = os.path.join(os.path.dirname(__file__), "static/fonts") + "/%d.ttf" % font_name
+        font_file = os.path.join(os.path.dirname(__file__), "static/fonts") + "/%d.TTF" % font_name
         font = ImageFont.truetype(font_file, 30)
         # 创建draw, 填充像素点, 起到干扰作用
         draw = ImageDraw.Draw(image)
